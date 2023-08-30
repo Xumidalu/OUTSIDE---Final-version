@@ -25,6 +25,10 @@ exit_pressed = pygame.image.load(os.path.join(dir_img, "beige_exit_button.png"))
 back = pygame.image.load(os.path.join(dir_img, "back.png")).convert_alpha()
 back_pressed = pygame.image.load(os.path.join(dir_img, "blue_back.png")).convert_alpha()
 
+pontos = 0
+fonte = pygame.font.SysFont("papyrus", 40, True)
+contagem = f"pontos: {pontos}"
+contagem_imprima = fonte.render(contagem, True, (0, 0, 0))
 
 
 class Button:
@@ -88,7 +92,9 @@ class MainMenu:
 class IniciarJogo:
     def __init__(self):
         window.fill((210, 180, 140))
+        window.blit(contagem_imprima, (1300, 50))
         self.back_button = Button(1500, 800, back, back_pressed)
+
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -103,6 +109,7 @@ class IniciarJogo:
 
     def update(self):
         window.fill((210, 180, 140))
+        window.blit(contagem_imprima, (1300, 50))
         self.back_button.draw()
 
 
