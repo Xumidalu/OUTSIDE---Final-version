@@ -22,7 +22,9 @@ credits_pressed = pygame.image.load(os.path.join(dir_img, "beige_credits_button.
 exit_ = pygame.image.load(os.path.join(dir_img, "brown_exit_button.png")).convert_alpha()
 exit_pressed = pygame.image.load(os.path.join(dir_img, "beige_exit_button.png")).convert_alpha()
 
-window.blit(home, (0, 0))
+back = pygame.image.load(os.path.join(dir_img, "back.png")).convert_alpha()
+back_pressed = pygame.image.load(os.path.join(dir_img, "blue_back.png")).convert_alpha()
+
 
 
 class Button:
@@ -60,6 +62,7 @@ class MainMenu:
         self.exit_button = Button(380, 700, exit_, exit_pressed)
 
     def update(self):
+        window.blit(home, (0, 0))
         self.init_button.draw()
         self.cred_button.draw()
         self.exit_button.draw()
@@ -85,6 +88,7 @@ class MainMenu:
 class IniciarJogo:
     def __init__(self):
         window.fill((210, 180, 140))
+        self.back_button = Button(1500, 800, back, back_pressed)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -92,12 +96,20 @@ class IniciarJogo:
                 pygame.quit()
                 quit()
 
+        if self.back_button.check_click():
+            return "main_menu"
+
+        return "iniciar_jogo"
+
     def update(self):
         window.fill((210, 180, 140))
+        self.back_button.draw()
+
 
 class Credits:
     def __init__(self):
         window.fill((47, 79, 79))
+        self.back_button = Button(1500, 800, back, back_pressed)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -105,8 +117,14 @@ class Credits:
                 pygame.quit()
                 quit()
 
+        if self.back_button.check_click():
+            return "main_menu"
+
+        return "ver_créditos"
+
     def update(self):
         window.fill((47, 79, 79))
+        self.back_button.draw()
 
 
 credits_screen = Credits()
@@ -125,7 +143,6 @@ while run:
     elif tela_atual == "ver_créditos":
         tela_atual = credits_screen.handle_events()
         credits_screen.update()
-
 
     pygame.display.update()
 
