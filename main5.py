@@ -25,6 +25,12 @@ exit_pressed = pygame.image.load(os.path.join(dir_img, "beige_exit_button.png"))
 back = pygame.image.load(os.path.join(dir_img, "back.png")).convert_alpha()
 back_pressed = pygame.image.load(os.path.join(dir_img, "blue_back.png")).convert_alpha()
 
+continuar = pygame.image.load(os.path.join(dir_img, "continuar.png")).convert_alpha()
+continuar_pressed = pygame.image.load(os.path.join(dir_img, "continuar_amarelo.png")).convert_alpha()
+
+fundo_bem_vindo = pygame.image.load(os.path.join(dir_img, "bem_vindo.png")).convert_alpha()
+fundo_bem_vindo = pygame.transform.scale(fundo_bem_vindo, (1600, 900))
+
 pontos = 0
 fonte = pygame.font.SysFont("papyrus", 40, True)
 contagem = f"pontos: {pontos}"
@@ -82,7 +88,7 @@ class MainMenu:
             quit()
 
         if self.init_button.check_click():
-            return "iniciar_jogo"
+            return "bem_vindo"
         elif self.cred_button.check_click():
             return "ver_créditos"
 
@@ -95,7 +101,6 @@ class IniciarJogo:
         window.blit(contagem_imprima, (1300, 50))
         self.back_button = Button(1500, 800, back, back_pressed)
 
-
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -103,7 +108,7 @@ class IniciarJogo:
                 quit()
 
         if self.back_button.check_click():
-            return "main_menu"
+            return "bem_vindo"
 
         return "iniciar_jogo"
 
@@ -111,6 +116,31 @@ class IniciarJogo:
         window.fill((210, 180, 140))
         window.blit(contagem_imprima, (1300, 50))
         self.back_button.draw()
+
+
+class BemVindo:
+    def __init__(self):
+        window.blit(fundo_bem_vindo, (0, 0))
+        self.continuar_button = Button(1500, 700, continuar, continuar_pressed)
+        self.back_button = Button(1300, 800, back, back_pressed)
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        if self.back_button.check_click():
+            return "main_menu"
+
+        if self.continuar_button.check_click():
+            return "iniciar_jogo"
+
+        return "bem_vindo"
+
+    def update(self):
+        window.blit(fundo_bem_vindo, (0, 0))
+        self.back_button.draw()
+        self.continuar_button.draw()
 
 
 class Credits:
@@ -134,6 +164,7 @@ class Credits:
         self.back_button.draw()
 
 
+welcome_screen = BemVindo()
 credits_screen = Credits()
 jogo_iniciado = IniciarJogo()
 main_menu = MainMenu()
@@ -150,6 +181,9 @@ while run:
     elif tela_atual == "ver_créditos":
         tela_atual = credits_screen.handle_events()
         credits_screen.update()
+    elif tela_atual == "bem_vindo":
+        tela_atual = welcome_screen.handle_events()
+        welcome_screen.update()
 
     pygame.display.update()
 
