@@ -1,6 +1,5 @@
 import pygame
 import os
-import time
 
 pygame.init()
 
@@ -180,22 +179,30 @@ class SalaDasCamas:
         window.blit(black_square, (100, 100))
         self.avante = Button(1350, 285, avante, avante_hover)
         self.recado = recadinhos(texto1, WHITE)
-        self.min_time = 100
-        self.tempo_desde_que_iniciou = pygame.time.get_ticks()
+        self.texto_atual = 1
+        self.time_within_actions = 1000
+        self.last_click = 0
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        if self.avante.check_click() and self.tempo_desde_que_iniciou >= self.min_time:
-            self.recado = recadinhos(texto2, WHITE)
-            tempo_entre_cliques = pygame.time.get_ticks() - self.tempo_desde_que_iniciou
-            if self.avante.check_click() and self.tempo_desde_que_iniciou >= self.min_time:
-                self.recado = recadinhos(texto3, WHITE)
-                self.tempo_desde_que_iniciou = pygame.time.get_ticks()
-                if self.avante.check_click() and self.tempo_desde_que_iniciou >= self.min_time:
+
+        tempo_atual = pygame.time.get_ticks()
+
+        if self.avante.check_click():
+            if tempo_atual - self.last_click >= self.time_within_actions:
+                self.last_click = tempo_atual
+                if self.texto_atual == 1:
+                    self.recado = recadinhos(texto2, WHITE)
+                    self.texto_atual = 2
+                elif self.texto_atual == 2:
+                    self.recado = recadinhos(texto3, WHITE)
+                    self.texto_atual = 3
+                elif self.texto_atual == 3:
                     self.recado = recadinhos(texto4, WHITE)
+                    self.texto_atual = 4
 
         return "camas"
 
