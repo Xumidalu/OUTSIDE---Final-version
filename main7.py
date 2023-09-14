@@ -176,6 +176,7 @@ class IniciarJogo:
 class SalaDasCamas:
     def __init__(self):
         window.blit(sala_das_camas, (0, 0))
+        self.balloon = True
         window.blit(black_square, (100, 100))
         self.avante = Button(1350, 285, avante, avante_hover)
         self.recado = recadinhos(texto1, WHITE)
@@ -203,14 +204,17 @@ class SalaDasCamas:
                 elif self.texto_atual == 3:
                     self.recado = recadinhos(texto4, WHITE)
                     self.texto_atual = 4
+                elif self.texto_atual == 4:
+                    self.balloon = False
 
         return "camas"
 
     def update(self):
         window.blit(sala_das_camas, (0, 0))
-        window.blit(black_square, (100, 100))
-        self.avante.draw()
-        window.blit(self.recado, (250, 150))
+        if self.balloon:
+            window.blit(black_square, (100, 100))
+            self.avante.draw()
+            window.blit(self.recado, (250, 150))
 
 
 class Credits:
