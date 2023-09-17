@@ -45,6 +45,11 @@ seta_esquerda = pygame.image.load(os.path.join(dir_img, "seta_esquerda.png")).co
 seta_esquerda = pygame.transform.scale(seta_esquerda, (100, 100))
 seta_esquerda_pressed = pygame.image.load(os.path.join(dir_img, "seta_esquerda_pressed.png")).convert_alpha()
 seta_esquerda_pressed = pygame.transform.scale(seta_esquerda_pressed, (100, 100))
+
+seta_direita = pygame.image.load(os.path.join(dir_img, "seta cinza direita.png")).convert_alpha()
+seta_direita = pygame.transform.scale(seta_direita, (100, 100))
+seta_direita_pressed = pygame.image.load(os.path.join(dir_img, "seta cinza direita pressionada.png")).convert_alpha()
+seta_direita_pressed = pygame.transform.scale(seta_direita_pressed, (100, 100))
 #
 salaa2p1 = pygame.image.load(os.path.join(dir_img, "sala2pt1.png")).convert_alpha()
 sala2p1 = pygame.transform.scale(salaa2p1, (1600, 900))
@@ -168,7 +173,7 @@ class SalaDasCamas:
         window.blit(black_square, (100, 100))
         self.avante = Button(1350, 285, avante, avante_hover)
         self.ver_a_carta = Button(1200, 560, seta, seta_pressed)
-        self.ir_pra_sala_esquerda = Button(500, 560, seta_esquerda, seta_esquerda_pressed)
+        self.ir_pra_sala_esquerda = Button(100, 560, seta_esquerda, seta_esquerda_pressed)
         self.buraco = Button(728, 385, buraco, buraco)
         self.hidden_button = Button(730, 380, hidden_button, hidden_button)
         self.recado = recadinhos(texto1, WHITE)
@@ -301,6 +306,7 @@ class SaladasGarrafonas:
         self.caixa = black_square
         self.texto = texto5
         self.recadin = recadinhos(self.texto, WHITE)
+        self.voltar_pra_sala_das_camas = Button(1500, 560, seta_direita, seta_direita_pressed)
         window.blit(self.caixa, (100, 100))
         window.blit(self.recadin, (200, 200))
         self.msg = False
@@ -316,6 +322,9 @@ class SaladasGarrafonas:
                     history = "registrando_sala_das_garrafonas"
                     return "menu_middle"
 
+        if self.voltar_pra_sala_das_camas.check_click():
+            return "camas"
+
         if self.escada.check_click():
             self.msg = True
         if self.avante.check_click():
@@ -323,14 +332,20 @@ class SaladasGarrafonas:
 
         return "sala2p1"
 
+
     def update(self):
         window.blit(sala2p1, (0, 0))
+        self.voltar_pra_sala_das_camas.draw()
         if self.msg == False:
             self.escada.draw()
         if self.msg == True:
             window.blit(self.caixa, (100, 100))
             window.blit(self.recadin, (200, 200))
             self.avante.draw()
+        if self.voltar_pra_sala_das_camas.check_click():
+            return "camas"
+        else:
+            return "sala2p1"
 
 
 class Credits:
