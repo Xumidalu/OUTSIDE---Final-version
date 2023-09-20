@@ -65,6 +65,8 @@ tela1_puzzle1 = pygame.image.load(os.path.join(dir_img, "puzzle1_recado1.png")).
 tela1_puzzle1 = pygame.transform.scale(tela1_puzzle1, (1600, 900))
 inventory_screen = pygame.image.load(os.path.join(dir_img, "inventário.png")).convert_alpha()
 inventory_screen = pygame.transform.scale(inventory_screen, (1600, 900))
+loucuras = pygame.image.load(os.path.join(dir_img, "importLoUcUrAs.png")).convert_alpha()
+loucurasBIG = pygame.transform.scale(loucuras, (300, 300))
 pontos = 0
 fonte = pygame.font.SysFont("papyrus", 40, True)
 contagem = f"pontos: {pontos}"
@@ -76,6 +78,8 @@ texto4 = "mas... talvez eu ache alguma pista?"
 texto5 = "Não tenho a chave"
 texto6 = "Ei... eu não sou maluco de por o braço aí...."
 texto7 = "Ah, certo, eu sou"
+texto8 = "Import   LOUCUUURAS   guardado  no  inventário"
+texto9 = "nada aqui"
 history = "sem telas recentes"
 seta_preta_esquerda = pygame.image.load(os.path.join(dir_img, "seta esquerda do inventário.png")).convert_alpha()
 seta_preta_esquerda_pressionada = pygame.image.load(
@@ -85,7 +89,9 @@ seta_preta_direita_pressionada = pygame.image.load(
     os.path.join(dir_img, "seta do inventário pressionada e direita.png")).convert_alpha()
 buraco = pygame.image.load(os.path.join(dir_img, "buraco.png")).convert_alpha()
 hidden_button = pygame.image.load(os.path.join(dir_img, "hidden_button.png")).convert_alpha()
+CINZA = (80, 80, 80)
 
+inventory_lot_1 = "Vago"
 
 def recadinhos(var, color):
     return fonte.render(var, True, color)
@@ -237,8 +243,6 @@ class SalaDasCamas:
         return "camas"
 
     def update(self):
-        desde_que_o_jogo_started = pygame.time.get_ticks()
-        intervalo_de_tempo = 0
         window.blit(sala_das_camas, (0, 0))
         if self.texto_atual <= 4:
             window.blit(black_square, (100, 100))
@@ -303,13 +307,20 @@ class SaladasGarrafonas:
         window.blit(sala2p1, (0, 0))
         self.escada = Button(500, 500, seta, seta_pressed)
         self.avante = Button(1350, 285, avante, avante_hover)
+        self.loucuras = Button(1100, 336, loucuras, loucuras)
         self.caixa = black_square
         self.texto = texto5
+        self.texto2 = texto8
         self.recadin = recadinhos(self.texto, WHITE)
+        self.recadin2 = recadinhos(self.texto2, WHITE)
         self.voltar_pra_sala_das_camas = Button(1500, 560, seta_direita, seta_direita_pressed)
         window.blit(self.caixa, (100, 100))
         window.blit(self.recadin, (200, 200))
         self.msg = False
+        self.contagem_do_black_square_pt2 = 0
+        self.varControle = 0
+        self.max_time = 400
+        self.show_potion = True
 
     def handle_events(self):
         global history
@@ -334,8 +345,26 @@ class SaladasGarrafonas:
 
 
     def update(self):
+        global inventory_lot_1
         window.blit(sala2p1, (0, 0))
         self.voltar_pra_sala_das_camas.draw()
+
+        if self.show_potion:
+            self.loucuras.draw()
+
+        if self.loucuras.check_click():
+            self.contagem_do_black_square_pt2 += 1
+            self.show_potion = False
+            inventory_lot_1 = "Loucuras"
+
+        if self.contagem_do_black_square_pt2 > 2:
+            window.blit(black_square, (100, 550))
+            window.blit(self.recadin2, (200, 645))
+            self.varControle += 0.5
+        if self.varControle > self.max_time:
+            self.contagem_do_black_square_pt2 = 0
+            self.varControle = 0
+
         if self.msg == False:
             self.escada.draw()
         if self.msg == True:
@@ -371,10 +400,14 @@ class Credits:
 
 class Inventory:
     def __init__(self):
+        global inventory_lot_1
         window.blit(inventory_screen, (0, 0))
         self.close_inventory = Button(100, 800, seta_esquerda, seta_esquerda_pressed)
         self.seta_esquerda = Button(250, 500, seta_preta_esquerda, seta_preta_esquerda_pressionada)
         self.seta_direita = Button(1350, 500, seta_preta_direita, seta_preta_direita_pressionada)
+        self.loucuras = Button(800, 450, loucurasBIG, loucurasBIG)
+        self.texto = texto9
+        self.recado = recadinhos(texto9, CINZA)
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -387,10 +420,17 @@ class Inventory:
         return "inventory"
 
     def update(self):
+        global inventory_lot_1
         window.blit(inventory_screen, (0, 0))
         self.close_inventory.draw()
         self.seta_esquerda.draw()
         self.seta_direita.draw()
+        if inventory_lot_1 == "Vago":
+            window.blit(self.recado, (720, 420))
+        elif inventory_lot_1 == "Loucuras":
+            self.loucuras.draw()
+        print(inventory_lot_1)
+
 
 
 class MiddleMenu:
