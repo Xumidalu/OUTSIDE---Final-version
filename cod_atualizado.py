@@ -153,6 +153,47 @@ pau = pygame.transform.scale(pau, (130, 7))
 pauBIG = pygame.transform.scale(pau, (390, 21))
 
 
+
+telaquizza = pygame.image.load("quiz/Telaquiz.png")
+telaquiz = pygame.transform.scale(telaquizza, (1600, 900))
+
+inic = pygame.image.load("quiz/Iniciar.png")
+
+vaiii = pygame.image.load("quiz/vai.png")
+
+Q1 = pygame.image.load("quiz/Q1.png")
+
+K = pygame.image.load("quiz/K.png")
+
+Na = pygame.image.load("quiz/Na.png")
+
+Cl =pygame.image.load("quiz/Cl.png")
+
+Q2 = pygame.image.load("quiz/Q2.png")
+
+Hcl = pygame.image.load("quiz/HCl.png")
+
+SO2 = pygame.image.load("quiz/SO2.png")
+
+C2H2 = pygame.image.load("quiz/C2H2.png")
+
+Q3 = pygame.image.load("quiz/Q3.png")
+
+C2H5OH = pygame.image.load("quiz/C2H5OH.png")
+
+C6H8O7 = pygame.image.load("quiz/C6H8O7.png")
+
+MgCl2 = pygame.image.load("quiz/MgCl2.png")
+
+MDC = pygame.image.load("quiz/MDC.png")
+
+
+tv_on = pygame.image.load(os.path.join(dir_img, "tv_ligada.png")).convert_alpha()
+tv_on = pygame.transform.scale(tv_on, (470, 300))
+
+tv_off = pygame.image.load(os.path.join(dir_img, "tv_apagada.png")).convert_alpha()
+tv_off = pygame.transform.scale(tv_off, (470, 300))
+
 def recadinhos(var, color):
     return fonte.render(var, True, color)
 
@@ -369,6 +410,10 @@ class SalaDaTV:
         window.blit(salaTV, (0, 0))
         self.ir_pra_sala_esquerda = Button(100, 560, seta_esquerda, seta_esquerda_pressed)
         self.voltar_pra_garrafona1 = Button(1500, 560, seta_direita, seta_direita_pressed)
+        self.tv_off = Button(565, 210, tv_off, tv_off)
+        self.tv_on = Button(565, 210, tv_on, tv_on)
+        self.varControle = 0
+        self.batata = True
 
     def handle_events(self):
         global history
@@ -380,6 +425,18 @@ class SalaDaTV:
                 if event.key == pygame.K_ESCAPE:
                     history = "registrando_sala_da_tv"
                     return "menu_middle"
+
+            if self.batata:
+                self.tv_off.draw()
+            if not self.batata:
+                self.tv_on.draw()
+
+            if self.tv_off.check_click():
+                self.batata = False
+                for e in range(1, 100000):
+                    if e == 99999:
+                        return "quiz"
+                    print(e)
 
         if self.ir_pra_sala_esquerda.check_click():
             for e in range(1, 100000):
@@ -398,6 +455,11 @@ class SalaDaTV:
     def update(self):
         global inventory_lot_1
         window.blit(salaTV, (0, 0))
+        if self.batata:
+            self.tv_off.draw()
+        if not self.batata:
+            self.tv_on.draw()
+
         self.ir_pra_sala_esquerda.draw()
         self.voltar_pra_garrafona1.draw()
         if self.ir_pra_sala_esquerda.check_click():
@@ -405,6 +467,13 @@ class SalaDaTV:
                 if e == 99999:
                     return "garrafa_pt_2"
                 print(e)
+
+        if self.tv_off.check_click():
+            for e in range(1, 100000):
+                if e == 99999:
+                    return "quiz"
+                print(e)
+            self.batata = False
 
         return "salaTV"
 
@@ -803,6 +872,99 @@ class Inventory:
                 self.chip.draw()
 
 
+class Quizzz():
+    def __init__(self):
+        window.blit(telaquiz, (0, 0))
+        window.blit(Q1, (0, 0))
+        window.blit(Q2, (0, 0))
+        window.blit(Q3, (0, 0))
+        window.blit(MDC, (0, 0))
+        self.Inic = Button(800, 500, inic, inic)
+        self.vaai = Button(800, 600, vaiii, vaiii)
+        self.K = Button(300, 200, K, K)
+        self.Na = Button(1200, 500, Na, Na)
+        self.Cl = Button(700, 700, Cl, Cl)
+        self.Hcl = Button(1000, 500, Hcl, Hcl)
+        self.SO2 = Button(600, 700, SO2, SO2)
+        self.C2H2 = Button(300, 200, C2H2, C2H2)
+        self.C2H5OH = Button(300, 400, C2H5OH, C2H5OH)
+        self.C6H8O7 = Button(500, 800, C6H8O7, C6H8O7)
+        self.MgCl2 = Button(1300, 100, MgCl2, MgCl2)
+        self.inicio = True
+        self.comc = False
+        self.Q1 = False
+        self.Q2 = False
+        self.Q3 = False
+        self.resp = False
+
+
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        if self.Inic.check_click() and self.inicio == True:
+            self.comc = True
+            self.inicio = False
+            self.Q1 = True
+        if self.vaai.check_click() and self.comc == True:
+            self.comc = False
+        if self.comc == False:
+            if self.Q1 == True:
+                if self.Cl.check_click():
+                    self.Q1 = False
+                    self.Q2 = True
+                    self.comc =True
+                elif self.K.check_click() or self.Na.check_click():
+                    return "salaTV"
+            elif self.Q2 == True:
+                if self.Hcl.check_click():
+                    return "salaTV"
+                elif self.SO2.check_click():
+                    return "salaTV"
+                elif self.C2H2.check_click():
+                    self.Q2 = False
+                    self.comc = True
+                    self.Q3 = True
+            elif self.Q3 == True:
+                if self.MgCl2.check_click():
+                    self.Q3 = False
+                    self.resp = True
+                elif self.C2H5OH.check_click() or self.C6H8O7.check_click():
+                    return "salaTV"
+
+        return "quiz"
+
+    def update(self):
+        window.blit(telaquiz, (0,0))
+        if self.inicio == True:
+            self.Inic.draw()
+        elif self.comc == True:
+            self.vaai.draw()
+            if self.Q1 == True:
+                window.blit(Q1, (0, 0))
+            elif self.Q2 == True:
+                window.blit(Q2, (0, 0))
+            elif self.Q3 == True:
+                window.blit(Q3, (0, 0))
+        elif self.comc == False:
+            if self.Q1 == True:
+                self.K.draw()
+                self.Na.draw()
+                self.Cl.draw()
+            elif self.Q2 == True:
+                self.C2H2.draw()
+                self.SO2.draw()
+                self.Hcl.draw()
+            elif self.Q3 == True:
+                self.MgCl2.draw()
+                self.C6H8O7.draw()
+                self.C2H5OH.draw()
+
+        if self.resp == True:
+            window.blit(MDC, (0, 0))
+
+
 
 class MiddleMenu:
     def __init__(self):
@@ -850,6 +1012,7 @@ class MiddleMenu:
         self.menuinic.draw()
 
 
+quizuu = Quizzz()
 sala2pt2_screen = Sala_das_Garrafa_pt_2()
 sala_da_TV = SalaDaTV()
 inventory = Inventory()
@@ -898,6 +1061,9 @@ while run:
     elif tela_atual == "garrafa_pt_2":
         tela_atual = sala2pt2_screen.handle_events()
         sala2pt2_screen.update()
+    elif tela_atual == "quiz":
+        tela_atual = quizuu.handle_events()
+        quizuu.update()
 
     pygame.display.update()
 
