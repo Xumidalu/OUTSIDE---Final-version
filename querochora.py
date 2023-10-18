@@ -328,12 +328,11 @@ class SalaDasCamas:
                 print(e)
 
         if self.hidden_button.check_click() and self.texto_atual > 4:
-            self.contagem_do_buraco += 1
-        if self.contagem_do_buraco > 110:
+            self.hidden_button.bye_bye()
             self.buraco.draw()
         else:
             self.hidden_button.draw()
-        if self.buraco.check_click() and self.contagem_do_buraco > 110:
+        if self.buraco.check_click():
             window.blit(black_square, (100, 550))
             window.blit(self.recado2, (200, 645))
 
@@ -351,15 +350,14 @@ class SalaDasCamas:
 
         if self.hidden_button.check_click() and self.texto_atual > 4:
             self.hidden_button.bye_bye()
-            self.contagem_do_buraco += 1
-        if self.contagem_do_buraco > 110:
             self.buraco.draw()
         else:
             self.hidden_button.draw()
+
         if self.buraco.check_click():
             self.contagem_do_black_square_pt2 += 1
 
-        if self.contagem_do_buraco > 110 and self.contagem_do_black_square_pt2 > 2:
+        if self.contagem_do_black_square_pt2 != 0:
             window.blit(black_square, (100, 550))
             window.blit(self.recado2, (200, 645))
             self.varControle += 0.5
