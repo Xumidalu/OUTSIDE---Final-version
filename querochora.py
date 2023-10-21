@@ -190,13 +190,9 @@ class Button:
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
             if pygame.mouse.get_pressed()[0]:
-                if not self.clicked:
-                    if self.rect.collidepoint(mouse_pos):
-                        click_sound.play()
-                        self.clicked = True
-                        return True
-            else:
-                self.clicked = False
+                click_sound.play()
+                return True
+
 
 
 class EscadaAcima:
