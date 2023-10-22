@@ -170,7 +170,7 @@ class Button:
         self.rect.center = (x_axis, y_axis)
         self.pressed = False
         self.showing = True
-        self.clicked = False
+        self.clicked = 0
 
     def draw(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -188,10 +188,13 @@ class Button:
     def check_click(self):
         global click_sound
         mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0]:
+        if self.rect.collidepoint(mouse_pos) and pygame.mouse.get_pressed()[0]:
+            self.clicked = 1
+            if self.clicked == 1:
                 click_sound.play()
                 return True
+            elif self.clicked == 0:
+                click_sound.stop()
 
 
 class EscadaAcima:
