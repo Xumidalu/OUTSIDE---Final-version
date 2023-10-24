@@ -15,18 +15,45 @@ pygame.display.set_caption("PerfGens")
 main_dir = os.path.dirname(__file__)
 dir_img = os.path.join(main_dir, "img")
 
-pygame.mixer.music.load('dirty-phonk-music-141626.mp3')
+trilhadapaz = pygame.mixer.music.load('trilhadapazduvidosa.mp3')
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1)
 
-armariosound = pygame.mixer.music.load('armariosound.mp4')
-pygame.mixer.music.set_volume(0.3)
-pygame.mixer.music.play(-1)
-teladatemperaturasound = pygame.mixer.music.load('telatempsound.mp4')
+armariosound = pygame.mixer.music.load('portadoarmarioabrida.mp3')
 pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1)
 
+coisodatemperatura = pygame.mixer.music.load('botãodatemp.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
 
+caixadoburaco = pygame.mixer.music.load('caixadoburaco.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+somdacarta = pygame.mixer.music.load('papel.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+respostacerta = pygame.mixer.music.load('respostacerta.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+respostaerrada = pygame.mixer.music.load('respostaerrada.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+trilhadastrevas = pygame.mixer.music.load('trilhasonoradastrevas.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+somdavalvula = pygame.mixer.music.load('valvulasound.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+somdaagua = pygame.mixer.music.load('águadonegóciodeágua.mp3')
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
 
 click_sound = pygame.mixer.Sound('mouse-click-153941.mp3')
 
@@ -176,19 +203,32 @@ class Button:
         self.image = image1
         self.rect = self.image.get_rect()
         self.rect.center = (x_axis, y_axis)
-        self.pressed = False
         self.showing = True
-        self.clicked = False
+        self.varControle = 0
 
     def draw(self):
-        mouse_pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(mouse_pos):
-            self.image = self.image2
-        else:
-            self.image = self.image1
-
         if self.showing:
+            self.varControle += 1
+            mouse_pos = pygame.mouse.get_pos()
+            if self.rect.collidepoint(mouse_pos):
+                self.image = self.image2
+            else:
+                self.image = self.image1
+
             window.blit(self.image, (self.rect.x, self.rect.y))
+
+    def bye_bye(self):
+        self.showing = False
+
+    def check_click(self):
+        if self.showing:
+            mouse_pos = pygame.mouse.get_pos()
+            if self.rect.collidepoint(mouse_pos):
+                if pygame.mouse.get_pressed()[0] and self.varControle > 100:
+                    click_sound.play()
+                    self.varControle = 0
+                    return True
+
 
     def bye_bye(self):
         self.showing = False
@@ -257,6 +297,8 @@ class MainMenu:
                 quit()
 
         if self.init_button.check_click():
+            click_sound.play()
+            trilhadapaz.play()
             return "camas"
 
         if self.exit_button.check_click():
@@ -328,6 +370,7 @@ class SalaDasCamas:
                     self.texto_atual = 5
 
         if self.ver_a_carta.check_click():
+            somdacarta.play()
             return "carta"
         if self.ir_pra_sala_esquerda.check_click():
             for e in range(1, 100000):
@@ -336,6 +379,7 @@ class SalaDasCamas:
                 print(e)
 
         if self.hidden_button.check_click() and self.texto_atual > 4:
+            caixadoburaco.play()
             self.hidden_button.bye_bye()
             self.buraco.draw()
         else:
@@ -376,6 +420,7 @@ class SalaDasCamas:
 
 class Carta:
     def __init__(self):
+        somdacarta.play()
         window.blit(carta_funciona, (0, 0))
         self.voltar = Button(100, 500, seta_left, seta_left_hover)
 
@@ -514,31 +559,37 @@ class Sala_das_Garrafa_pt_2:
                     return "menu_middle"
 
         if self.one and self.right.check_click():
+            coisodatemperatura.play()
             self.one = False
             self.two = True
             self.var1 = 0
 
         if self.two and self.right.check_click():
+            coisodatemperatura.play()
             self.two = False
             self.three = True
             self.var2 = 0
 
         if self.three and self.right.check_click():
+            coisodatemperatura.play()
             self.three = False
             self.four = True
             self.var3 = 0
 
         if self.four and self.left.check_click():
+            coisodatemperatura.play()
             self.four = False
             self.three = True
             self.var4 = 0
 
         if self.three and self.left.check_click():
+            coisodatemperatura.play()
             self.three = False
             self.two = True
             self.var5 = 0
 
         if self.two and self.left.check_click():
+            coisodatemperatura.play()
             self.two = False
             self.one = True
             self.var6 = 0
@@ -630,10 +681,6 @@ class Sala_das_Garrafa_pt_2:
         self.left.draw()
         self.right.draw()
 
-        if self.left.check_click():
-            teladatemperaturasound.play()
-        if self.right.check_click():
-            teladatemperaturasound.play()
 
         if self.four:
             self.abrir_conte += 0.2
