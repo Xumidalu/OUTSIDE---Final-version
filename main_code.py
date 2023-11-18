@@ -96,6 +96,7 @@ pygame.display.set_caption("Outside")
 
 
 # ----fundos----
+ywin_ld = img_cut("img/resposta_ld.png", X, Y)
 divagar = img_cut("img/divagar.png", X, Y)
 cre1 = img_cut("img/cred1.png", X, Y)
 cre2 = img_cut("img/cred2.png", X, Y)
@@ -149,7 +150,7 @@ armarioo = img_cut("img/armario.png", 734.44, 263.33)
 buraco = img_cut("img/buraco.png", 728, 385)
 garrafas = img_cut("img/garrafas.png", 450, 600)
 pau = img_cut("img/pau.png", 130, 7)
-chip = img_cut("img/chip.png", 58, 40)
+chip = img_cut("img/chip.png", 120, 80)
 chipampli = img_cut("img/chip.png", 540, 325.5)
 pastaroxa, pastaroxapressed = img_cut("img/pastaroxa.png", 95, 205), img_cut("img/pastaroxapressed.png", 95, 205)
 pastaverde, pastaverdepressed = img_cut("img/pastaverde.png", 95, 205), img_cut("img/pastaverdepressed.png", 95, 205)
@@ -284,8 +285,17 @@ O_arm = img("img/O_arm.png")
 
 setaesquerdagrau, setaesquerdagraupressed = img("img/left_grau.png"), img("img/left_grau_pressed.png")
 setadireitagrau, setadireitagraupressed = img("img/right_grau.png"), img("img/right_grau_pressed.png")
+
+a500 = img_cut("img/500.png", 370, 135.833)
+a1000 = img_cut("img/1000.png", 370, 135.833)
+a1500 = img_cut("img/1500.png", 370, 135.833)
+a2000 = img_cut("img/2000.png", 370, 135.833)
+
+diamante = img_cut("img/diamante.png", 555.833, 448.33)
+
+
 # variáveis
-tela_atual = "main_menu"
+tela_atual = "mesa"
 
 rightcomb = False
 comb = []
@@ -324,7 +334,22 @@ grau = 1
 
 portaaberta = False
 cartão = False
-cartão_catch = True
+cartão_catch = False
+
+temperight = False
+
+faca = False
+faca_catch = False
+
+def faca_catching():
+    global tela_atual, faca_catch
+    faca_catch = True
+    tela_atual = "mesa"
+
+def faca_active():
+    global faca
+    faca = True
+
 
 # defs
 
@@ -509,6 +534,10 @@ def change_telas():
             tela_atual = "saladatv"
         elif portaaberta == True:
             tela_atual = "saladatv_portaberta"
+        historyy.append(tela_atual)
+    elif tela_atual == "temp":
+        tela_atual = "mesa"
+        historyy.append(tela_atual)
 
 def change_telas_reverse():
     global tela_atual, historyy
@@ -525,47 +554,6 @@ def change_telas_reverse():
         tela_atual = "estante"
         historyy.append(tela_atual)
 
-def change_telas():
-    global tela_atual, historyy, portaaberta
-    if tela_atual == "camas":
-        if rightcomb == False:
-            tela_atual = "covalentes"
-        elif rightcomb == True:
-            tela_atual = "garrafonas"
-        historyy.append(tela_atual)
-    elif tela_atual == "garrafonas":
-        tela_atual = "saladatv"
-        historyy.append(tela_atual)
-    elif tela_atual == "garrafonas_ampliadas":
-        tela_atual = "garrafonas"
-        historyy.append(tela_atual)
-    elif tela_atual == "carta":
-        tela_atual = "camas"
-        historyy.append(tela_atual)
-    elif tela_atual == "estante":
-        tela_atual = "saladatv"
-        historyy.append(tela_atual)
-    elif tela_atual == "pc_tela_inicial":
-        tela_atual = "mesa"
-        historyy.append(tela_atual)
-    elif tela_atual == "senha1":
-        tela_atual = "mesa"
-        historyy.append(tela_atual)
-    elif tela_atual == "armario":
-        tela_atual = "garrafonas"
-        historyy.append(tela_atual)
-    elif tela_atual == "red_caixa":
-        tela_atual = "mesa"
-        historyy.append(tela_atual)
-    elif tela_atual == "green_caixa":
-        tela_atual = "mesa"
-        historyy.append(tela_atual)
-    elif tela_atual == "porta":
-        if portaaberta == False:
-            tela_atual = "saladatv"
-        elif portaaberta == True:
-            tela_atual = "saladatv_portaberta"
-
 
 def main_menu():
     global tela_atual, historyy, roxo, verde, water, caixaestante, Q1_lastd, Q2_lastd
@@ -581,7 +569,7 @@ def main_menu():
 
 def cred():
     global tela_atual
-    tela_atual = "créditos"
+    tela_atual = "cred1"
 
 
 def saladascamas():
@@ -591,9 +579,10 @@ def saladascamas():
 
 
 def sala_da_senha1():
-    global tela_atual, historyy
-    tela_atual = "senha1"
-    historyy.append(tela_atual)
+    global tela_atual, historyy, temperight
+    if temperight == True:
+        tela_atual = "senha1"
+        historyy.append(tela_atual)
 
 def telaPC():
     global tela_atual, historyy
@@ -789,16 +778,18 @@ def temperatura():
     historyy.append(tela_atual)
 
 def add_temp():
-    global grau
+    global grau, temperight
     grau += 1
-    if grau > 4:
+    if grau == 5:
         grau = 1
+    elif grau == 4:
+        temperight = True
 
 def delete_temp():
     global grau
     grau -= 1
-    if grau < 1:
-        grau = 4,
+    if grau == 0:
+        grau = 4
 
 def carta():
     global tela_atual, history
@@ -875,6 +866,11 @@ def quiz_lastdoor_op2():
 def lost_lastdoor():
     global tela_atual
     tela_atual = "You've_lost"
+
+def win_lastdoor():
+    global tela_atual, historyy
+    tela_atual = "win_ld"
+    historyy.append(tela_atual)
 
 def abre():
     global tela_atual, area_invent, fichetas, cartão, portaaberta
@@ -1158,14 +1154,29 @@ inventory = Button(510, 590, inventario, inventariopressed, actions=[inventario_
 
 # -----créditos-----
 
-pink_back_button = Button(1100, 700, back, back_pressed, actions=[main_menu, fade])
+volcred1 = Button(300, 590, voltar_cred, voltar_cred, actions=[main_menu, fade])
+volcred2 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred1, fade])
+volcred3 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred2, fade])
+volcred4 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred3, fade])
+volcred5 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred4, fade])
+volcred6 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred5, fade])
+volcred7 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred6, fade])
+volcred8 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred7, fade])
+
+avacred1 = Button(820, 590, avante_cred, avante_cred, actions=[cred2, fade])
+avacred2 = Button(820, 590, avante_cred, avante_cred, actions=[cred3, fade])
+avacred3 = Button(820, 590, avante_cred, avante_cred, actions=[cred4, fade])
+avacred4 = Button(820, 590, avante_cred, avante_cred, actions=[cred5, fade])
+avacred5 = Button(820, 590, avante_cred, avante_cred, actions=[cred6, fade])
+avacred6 = Button(820, 590, avante_cred, avante_cred, actions=[cred7, fade])
+avacred7 = Button(820, 590, avante_cred, avante_cred, actions=[cred8, fade])
 
 # -----Inventário -----
 
 seta_direita_invent = Button(1300, 370, setadireitadoinventario, setadireitadoinventariopressed, actions=[count_invent])
 seta_esquerda_invent = Button(100, 370, setaesquerdadoinventario, setaesquerdadoinventariopressionada, actions=[count_invent_reverse])
 
-abrek7 = Button(625, 700, abrir, abrirpressed, actions=[fade, abre])
+abrek7 = Button(625, 700, abrir, abrirpressed, actions=[abre])
 
 # -----maps_general-----
 
@@ -1257,6 +1268,7 @@ voltar_arqui = Button(5, 400, setaesquerda, setaesquerdapressed, actions=[return
 
 avante_grey_1 = Button(1350, 700, avante_darkgrey, avante_lightgrey, actions=[fade, quiz_lastdoor_op1])
 avante_grey_2 = Button(1350, 700, avante_darkgrey, avante_lightgrey, actions=[fade, quiz_lastdoor_op2])
+avante_grey_3 = Button(1350, 700, avante_darkgrey, avante_lightgrey, actions=[faca_catching])
 olhinho = Button(400, 50, olho, olho, actions=[fade, quiz_lastdoor_text1])
 voltaa = Button(1200, 100, voltar_lastroom, voltar_lastroom_hover, actions=[fade, quiz_lastdoor])
 
@@ -1265,11 +1277,8 @@ Op2_q1_ld = Button(600, 300, Op2q1_ld, Op2q1_ld, actions=[respostaerradaa, fade,
 Op3_q1_ld = Button(1000, 300, Op3q1_ld, Op3q1_ld, actions=[respostaerradaa, fade, reset, lost_lastdoor])
 Op1_q2_ld = Button(200, 300, Op1q2_ld, Op1q2_ld, actions=[respostaerradaa, fade, reset, lost_lastdoor])
 Op2_q2_ld = Button(600, 300, Op2q2_ld, Op2q2_ld, actions=[respostaerradaa, fade, reset, lost_lastdoor])
-Op3_q2_ld = Button(1000, 300, Op3q2_ld, Op3q2_ld, actions=[respostacertaa, fade, quiz_lastdoor_count])
+Op3_q2_ld = Button(1000, 300, Op3q2_ld, Op3q2_ld, actions=[respostacertaa, fade, quiz_lastdoor_count, win_lastdoor()])
 ##
-Op1_q3_ld = Button(200, 300, Op1q2_ld, Op1q2_ld, actions=[respostaerradaa, fade ,reset, lost_lastdoor])
-Op2_q3_ld = Button(600, 300, Op2q2_ld, Op2q2_ld, actions=[respostaerradaa, fade, reset, lost_lastdoor])
-Op3_q3_ld = Button(1000, 300, Op3q2_ld, Op3q2_ld, actions=[respostacertaa, fade, quiz_lastdoor_count])
 
 
 # -----"Covalentes" -----
@@ -1287,7 +1296,7 @@ Sbutton = Button(170, 320, S, Spressed, actions=[tenth])
 
 # ---- sala do pc ----
 
-pc_button = Button(-36, 277, pc, pc, actions=[fade, sala_da_senha1])
+pc_button = Button(-36, 277, pc, pc, actions=[sala_da_senha1])
 temperatura_cinza = Button(550, 100, graucinza, graucinza, actions=[temperatura, fade])
 ir_pra_caixa = Button(450, 400, caixa_lastroom_png, caixa_lastroom_png,
                       actions=[qual_caixa])
@@ -1324,13 +1333,13 @@ cancelar = Button(860, 635, cancelar, cancelar, actions=[def_machine_on, ghost_b
 esquecer = Button(440, 635, esquecer, esquecer, actions=[telaPC])
 
 #-----temp-----
-leftgrau = Button(400, 300, setaesquerdagrau, setaesquerdagraupressed, actions=[delete_temp])
-rightgrau = Button(700, 300, setadireitagrau, setadireitagraupressed, actions=[add_temp])
+leftgrau = Button(980, 443, setadireitagrau, setadireitagraupressed, actions=[delete_temp])
+rightgrau = Button(1200, 443, setaesquerdagrau, setaesquerdagraupressed, actions=[add_temp])
 
 
 #aaa sla
 
-chipzin = Button(700, 800, chip, chip, actions=[carttrue,  on_button_click_chip])
+chipzin = Button(855, 475, chip, chip, actions=[carttrue,  on_button_click_chip])
 
 #bulindo com drag and drop
 
@@ -1365,7 +1374,7 @@ drop_area = pygame.Rect(710, 60, 350, 360)
 dragging_chip = False
 offset_x, offset_y = 0, 0
 
-transparent_surface = pygame.Surface((image_rect_chip.width, image_rect_chip.height), pygame.SRCALPHA)
+
 
 # bulindo com texto
 
@@ -1382,12 +1391,15 @@ def draw_text(text, font, color, x, y):
 #        width = img.get_width()
         window.blit(img, (x, y + i * font_size))
 
+# TELA FINAL BITCHES
+
+star = Button(1000, 200, star_png, star_png, actions=[divaga])
+
 
 # definir botões
 botoes = {
     "main_menu": [iniciar_jogo, vai_pros_cred, fecha],
     "menu_middle": [main_menuu, retomar, inventory],
-    "créditos":  [pink_back_button],
     "inventário": [seta_direita_invent, seta_esquerda_invent, abrek7],
     "camas": [left, cama_but],
     "senha1": [left],
@@ -1415,15 +1427,25 @@ botoes = {
     "op_lastdoor1": [Op1_q1_ld, Op2_q1_ld, Op3_q1_ld],
     "op_lastdoor2": [Op1_q2_ld, Op2_q2_ld, Op3_q2_ld],
     "You've_lost": [voltaa],
+    "win_ld": [avante_grey_3],
     "mesa": [pc_button, temperatura_cinza, ir_pra_caixa, porta_ld],
-    "temp": [leftgrau, rightgrau],
+    "temp": [leftgrau, rightgrau, left],
     "pc_tela_inicial": [x_button, left],
     "pc_aviso": [aviso, cancelar, esquecer],
     "red_caixa": [red_machine, left],
     "green_caixa": [green_machine, left],
     "invent_arq": [],
     "porta": [left],
-    "arm_open": [chipzin, left]
+    "arm_open": [chipzin, left],
+    "cred1": [volcred1, avacred1],
+    "cred2": [volcred2, avacred2],
+    "cred3": [volcred3, avacred3],
+    "cred4": [volcred4, avacred4],
+    "cred5": [volcred5, avacred5],
+    "cred6": [volcred6, avacred6],
+    "cred7": [volcred7, avacred7],
+    "cred8": [volcred8],
+    "divagar_final": [star]
 }
 
 running = True
@@ -1520,8 +1542,40 @@ while running:
         fundo(fundo_middlemenu)
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
-    elif tela_atual == "créditos":
-        fundo(credits_background)
+    elif tela_atual == "cred1":
+        fundo(cre1)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred2":
+        fundo(cre2)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred3":
+        fundo(cre3)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred4":
+        fundo(cre4)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred5":
+        fundo(cre5)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred6":
+        fundo(cre6)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred7":
+        fundo(cre7)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "cred8":
+        fundo(cre8)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "divagar_final":
+        fundo(divagar)
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
     elif tela_atual == "inventário":
@@ -1644,12 +1698,17 @@ while running:
         window.fill((150, 147, 147))
         if grau == 1:
             window.blit(grau1, (150, 180))
+            window.blit(a500, (930, 260))
         elif grau == 2:
             window.blit(grau2, (150, 180))
+            window.blit(a1000, (930, 260))
         elif grau == 3:
             window.blit(grau3, (150, 180))
+            window.blit(a1500, (930, 260))
         elif grau == 4:
             window.blit(grau4, (150, 180))
+            window.blit(a2000, (930, 260))
+        window.blit(diamante, (280, 210))
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
 
@@ -1757,6 +1816,10 @@ while running:
 
     elif tela_atual == "You've_lost":
         fundo(lost_ld)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+    elif tela_atual == "win_ld":
+        fundo(ywin_ld)
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
 
