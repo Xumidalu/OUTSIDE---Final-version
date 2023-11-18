@@ -1,4 +1,4 @@
-import pygame, asyncio
+import pygame
 import playsound
 import os
 import sys
@@ -96,7 +96,6 @@ pygame.display.set_caption("Outside")
 
 
 # ----fundos----
-
 divagar = img_cut("img/divagar.png", X, Y)
 cre1 = img_cut("img/cred1.png", X, Y)
 cre2 = img_cut("img/cred2.png", X, Y)
@@ -135,6 +134,9 @@ lost_ld = img_cut("img/Youlost.png", 1600, 900)
 
 tela_carta = img_cut("img/carta.jpg", X, Y)
 
+porta_vermelho = img_cut("img/porta_vermei.png", X, Y)
+porta_verde = img_cut("img/porta_abriu.png", X, Y)
+
 # ----elementos_salas----
 
 Q1_ld = img("img/Q1_lastdoor.png")
@@ -148,6 +150,7 @@ buraco = img_cut("img/buraco.png", 728, 385)
 garrafas = img_cut("img/garrafas.png", 450, 600)
 pau = img_cut("img/pau.png", 130, 7)
 chip = img_cut("img/chip.png", 58, 40)
+chipampli = img_cut("img/chip.png", 540, 325.5)
 pastaroxa, pastaroxapressed = img_cut("img/pastaroxa.png", 95, 205), img_cut("img/pastaroxapressed.png", 95, 205)
 pastaverde, pastaverdepressed = img_cut("img/pastaverde.png", 95, 205), img_cut("img/pastaverdepressed.png", 95, 205)
 pastaroxaampli = img_cut("img/pastaroxaampli.png", 618, 840)
@@ -159,8 +162,8 @@ caixalastroom = img("img/caixa_lastroom.png")
 caixalastroomopen = img("img/caixa_lastroom_open_active.png")
 caixalastroomnoactive = img("img/caixa_lastroom_open_notactive.png")
 portaclosed = img_cut("img/porta_closed.png", 302, 476)
-portalastroom = img("img/porta_lastroom.png")
-portaopen = img("img/porta_open.png")
+portalastroom = img_cut("img/porta_lastroom.png", 302, 476 )
+portaopen = img_cut("img/porta_open.png", 302, 476)
 grau1 = img("img/grau1.png")
 grau2 = img("img/grau2.png")
 grau3 = img("img/grau3.png")
@@ -279,10 +282,10 @@ H_arm = img("img/H_arm.png")
 Hg_arm = img("img/Hg_arm.png")
 O_arm = img("img/O_arm.png")
 
-setadireitagrau, setadireitagraupressed = img("img/left_grau.png"), img("img/left_grau_pressed.png")
-setaesquerdagrau, setaesquerdagraupressed = img("img/right_grau.png"), img("img/right_grau_pressed.png")
+setaesquerdagrau, setaesquerdagraupressed = img("img/left_grau.png"), img("img/left_grau_pressed.png")
+setadireitagrau, setadireitagraupressed = img("img/right_grau.png"), img("img/right_grau_pressed.png")
 # variáveis
-tela_atual = "divagar_final"
+tela_atual = "main_menu"
 
 rightcomb = False
 comb = []
@@ -317,8 +320,11 @@ counting_secondseta_arm = 1
 # Referente à máquina do olho
 olho_on = False
 
-
 grau = 1
+
+portaaberta = False
+cartão = False
+cartão_catch = True
 
 # defs
 
@@ -387,8 +393,6 @@ def last_screen():
     global tela_atual, historyy
     tela_atual = historyy[-1]
 
-
-
 def cred1():
     global tela_atual
     tela_atual = "cred1"
@@ -428,9 +432,42 @@ def cred8():
     global tela_atual
     tela_atual = "cred8"
 
+lala = True
+
+
+def balao_off():
+    global lala
+    lala = False
+
+
+def balao_on():
+    global lala
+    if lala:
+        for e in range(0, 10):
+            if e < 9:
+                window.blit(balaoescuro, (50, 600))
+
+
+star_png = img("img/star.png")
+
+
+def divagar_final():
+    global tela_atual
+    tela_atual = "divagar_final"
+
+
+def divaga():
+    global star
+    star.set_show_text_function(
+        lambda: show_text_on_image(window, "Me pergunto o que acontece depois daqui... "
+                                           "Será algo pior..? "))
+    star.draw_text(window)
+
+
+star = Button(1000, 200, star_png, star_png, actions=[divaga])
 
 def change_telas():
-    global tela_atual, historyy
+    global tela_atual, historyy, portaaberta
     if tela_atual == "camas":
         if rightcomb == False:
             tela_atual = "covalentes"
@@ -443,8 +480,64 @@ def change_telas():
     elif tela_atual == "garrafonas_ampliadas":
         tela_atual = "garrafonas"
         historyy.append(tela_atual)
-    elif tela_atual == "saladatv":
+    elif tela_atual == "carta":
+        tela_atual = "camas"
+        historyy.append(tela_atual)
+    elif tela_atual == "estante":
+        tela_atual = "saladatv"
+        historyy.append(tela_atual)
+    elif tela_atual == "pc_tela_inicial":
         tela_atual = "mesa"
+        historyy.append(tela_atual)
+    elif tela_atual == "senha1":
+        tela_atual = "mesa"
+        historyy.append(tela_atual)
+    elif tela_atual == "armario":
+        tela_atual = "garrafonas"
+        historyy.append(tela_atual)
+    elif tela_atual == "arm_open":
+        tela_atual = "garrafonas"
+        historyy.append(tela_atual)
+    elif tela_atual == "red_caixa":
+        tela_atual = "mesa"
+        historyy.append(tela_atual)
+    elif tela_atual == "green_caixa":
+        tela_atual = "mesa"
+        historyy.append(tela_atual)
+    elif tela_atual == "porta":
+        if portaaberta == False:
+            tela_atual = "saladatv"
+        elif portaaberta == True:
+            tela_atual = "saladatv_portaberta"
+
+def change_telas_reverse():
+    global tela_atual, historyy
+    if tela_atual == "garrafonas":
+        tela_atual = "camas"
+        historyy.append(tela_atual)
+    elif tela_atual == "saladatv":
+        tela_atual = "garrafonas"
+        historyy.append(tela_atual)
+    elif tela_atual == "camas":
+        tela_atual = "carta"
+        historyy.append(tela_atual)
+    elif tela_atual == "saladatv":
+        tela_atual = "estante"
+        historyy.append(tela_atual)
+
+def change_telas():
+    global tela_atual, historyy, portaaberta
+    if tela_atual == "camas":
+        if rightcomb == False:
+            tela_atual = "covalentes"
+        elif rightcomb == True:
+            tela_atual = "garrafonas"
+        historyy.append(tela_atual)
+    elif tela_atual == "garrafonas":
+        tela_atual = "saladatv"
+        historyy.append(tela_atual)
+    elif tela_atual == "garrafonas_ampliadas":
+        tela_atual = "garrafonas"
         historyy.append(tela_atual)
     elif tela_atual == "carta":
         tela_atual = "camas"
@@ -467,24 +560,11 @@ def change_telas():
     elif tela_atual == "green_caixa":
         tela_atual = "mesa"
         historyy.append(tela_atual)
-
-def change_telas_reverse():
-    global tela_atual, historyy
-    if tela_atual == "garrafonas":
-        tela_atual = "camas"
-        historyy.append(tela_atual)
-    elif tela_atual == "saladatv":
-        tela_atual = "garrafonas"
-        historyy.append(tela_atual)
-    elif tela_atual == "mesa":
-        tela_atual = "saladatv"
-        historyy.append(tela_atual)
-    elif tela_atual == "camas":
-        tela_atual = "carta"
-        historyy.append(tela_atual)
-    elif tela_atual == "saladatv":
-        tela_atual = "estante"
-        historyy.append(tela_atual)
+    elif tela_atual == "porta":
+        if portaaberta == False:
+            tela_atual = "saladatv"
+        elif portaaberta == True:
+            tela_atual = "saladatv_portaberta"
 
 
 def main_menu():
@@ -718,7 +798,7 @@ def delete_temp():
     global grau
     grau -= 1
     if grau < 1:
-        grau = 1
+        grau = 4,
 
 def carta():
     global tela_atual, history
@@ -797,31 +877,18 @@ def lost_lastdoor():
     tela_atual = "You've_lost"
 
 def abre():
-    global tela_atual, area_invent, fichetas
+    global tela_atual, area_invent, fichetas, cartão, portaaberta
     if area_invent == 1:
         if fichetas != []:
             tela_atual = "invent_arq"
-    else:
-        pass
+    elif area_invent == 2:
+        if cartão == False and portaaberta == False and historyy[-1] == "porta":
+            cartão = True
 
-
-star_png = img("img/star.png")
-
-
-def divagar_final():
-    global tela_atual
-    tela_atual = "divagar_final"
-
-
-def divaga():
-    global star
-    star.set_show_text_function(
-        lambda: show_text_on_image(window, "Me pergunto o que acontece depois daqui... "
-                                           "Será algo pior..? "))
-    star.draw_text(window)
-
-
-star = Button(1000, 200, star_png, star_png, actions=[divaga])
+def portafechabre():
+    global tela_atual, historyy
+    tela_atual = "porta"
+    historyy.append(tela_atual)
 
 
 #---combinações---
@@ -989,6 +1056,10 @@ def on_button_click_monstrin():
     fichetas.append(a)
     print(fichetas)
 
+def on_button_click_chip():
+    global fichetas
+    chipzin.hide()
+
 #-----Variáveis-----
 
 def agua():
@@ -1000,7 +1071,6 @@ def agua():
         valv.clear()
 
 #-----Sons-----
-
 
 #pygame.mixer.music.load('Audio/trilhadapazduvidosa.mp3')
 #pygame.mixer.music.set_volume(0.3)
@@ -1067,13 +1137,17 @@ def somdacaixadoburacoo():
 
 
 
+def carttrue():
+    global cartão_catch
+    cartão_catch = True
+
 
 # Botões
 
 # -----main_menu-----
 
 iniciar_jogo = Button(510, 190, iniciar, iniciar_pressionado, actions=[saladascamas, fade])
-vai_pros_cred = Button(510, 390, creditos, creditos_pressionado, actions=[cred1, fade])
+vai_pros_cred = Button(510, 390, creditos, creditos_pressionado, actions=[cred, fade])
 fecha = Button(510, 590, sair, sair_pressionado, actions=[quita])
 
 # ------ menu middle ------
@@ -1084,22 +1158,7 @@ inventory = Button(510, 590, inventario, inventariopressed, actions=[inventario_
 
 # -----créditos-----
 
-volcred1 = Button(300, 590, voltar_cred, voltar_cred, actions=[main_menu, fade])
-volcred2 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred1, fade])
-volcred3 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred2, fade])
-volcred4 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred3, fade])
-volcred5 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred4, fade])
-volcred6 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred5, fade])
-volcred7 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred6, fade])
-volcred8 = Button(300, 590, voltar_cred, voltar_cred, actions=[cred7, fade])
-
-avacred1 = Button(820, 590, avante_cred, avante_cred, actions=[cred2, fade])
-avacred2 = Button(820, 590, avante_cred, avante_cred, actions=[cred3, fade])
-avacred3 = Button(820, 590, avante_cred, avante_cred, actions=[cred4, fade])
-avacred4 = Button(820, 590, avante_cred, avante_cred, actions=[cred5, fade])
-avacred5 = Button(820, 590, avante_cred, avante_cred, actions=[cred6, fade])
-avacred6 = Button(820, 590, avante_cred, avante_cred, actions=[cred7, fade])
-avacred7 = Button(820, 590, avante_cred, avante_cred, actions=[cred8, fade])
+pink_back_button = Button(1100, 700, back, back_pressed, actions=[main_menu, fade])
 
 # -----Inventário -----
 
@@ -1144,8 +1203,13 @@ elif water == True:
     tv = img_cut("img/tv_ligada.png", 437.5, 282.5)
 
 estante_but = Button(1010, 50, estante, estante, actions=[estantee, fade])
-porta_estante = Button(35, 95, portaclosed, portaclosed, actions=[])
+porta_estante = Button(35, 95, portaclosed, portaclosed, actions=[fade, portafechabre])
 Tv_estante = Button(325, 95, tv, tv, actions=[counting_quizzin, quiz_da_tv, fade_tv])
+
+
+porta_estante_ab = Button(0, 105, portaopen, portaopen, actions=[fade, mesa])
+
+porta_ld = Button(1200, 95, portalastroom, portalastroom, actions=[fade, saladaTV])
 
 # -----side_estante-----
     #QUIZ
@@ -1260,8 +1324,13 @@ cancelar = Button(860, 635, cancelar, cancelar, actions=[def_machine_on, ghost_b
 esquecer = Button(440, 635, esquecer, esquecer, actions=[telaPC])
 
 #-----temp-----
-leftgrau = Button(980, 443, setaesquerdagrau, setaesquerdagraupressed, actions=[delete_temp])
-rightgrau = Button(1200, 443, setadireitagrau, setadireitagraupressed, actions=[add_temp])
+leftgrau = Button(400, 300, setaesquerdagrau, setaesquerdagraupressed, actions=[delete_temp])
+rightgrau = Button(700, 300, setadireitagrau, setadireitagraupressed, actions=[add_temp])
+
+
+#aaa sla
+
+chipzin = Button(700, 800, chip, chip, actions=[carttrue,  on_button_click_chip])
 
 #bulindo com drag and drop
 
@@ -1287,6 +1356,17 @@ offsets = [(0, 0) for _ in range(3)]
 
 changing_image = [None, None, None, None, None]
 
+
+image_chip = chipampli
+
+image_rect_chip = image_chip.get_rect(topleft=(900, 600))
+
+drop_area = pygame.Rect(710, 60, 350, 360)
+dragging_chip = False
+offset_x, offset_y = 0, 0
+
+transparent_surface = pygame.Surface((image_rect_chip.width, image_rect_chip.height), pygame.SRCALPHA)
+
 # bulindo com texto
 
 text = [""]
@@ -1303,14 +1383,11 @@ def draw_text(text, font, color, x, y):
         window.blit(img, (x, y + i * font_size))
 
 
-# TELA FINAL BITCHES
-
-star = Button(1000, 200, star_png, star_png, actions=[divaga])
-
 # definir botões
 botoes = {
     "main_menu": [iniciar_jogo, vai_pros_cred, fecha],
     "menu_middle": [main_menuu, retomar, inventory],
+    "créditos":  [pink_back_button],
     "inventário": [seta_direita_invent, seta_esquerda_invent, abrek7],
     "camas": [left, cama_but],
     "senha1": [left],
@@ -1319,7 +1396,8 @@ botoes = {
     "garrafonas": [left, right, garrafonas, arm, escadinha],
     "armario": [left, setacima1, setacima2, setabaixo1, setabaixo2],
     "garrafonas_ampliadas": [left, valv1, valv2, valv3],
-    "saladatv": [estante_but, right, Tv_estante, porta_estante, left],
+    "saladatv": [estante_but, right, Tv_estante, porta_estante],
+    "saladatv_portaberta": [estante_but, right, Tv_estante, porta_estante_ab],
     "quiz_tv": [play],
     "Op1_tv": [Op1Q1_tv, Op2Q1_tv, Op3Q1_tv],
     "Op2_tv": [Op1Q2_tv, Op2Q2_tv, Op3Q2_tv],
@@ -1337,22 +1415,15 @@ botoes = {
     "op_lastdoor1": [Op1_q1_ld, Op2_q1_ld, Op3_q1_ld],
     "op_lastdoor2": [Op1_q2_ld, Op2_q2_ld, Op3_q2_ld],
     "You've_lost": [voltaa],
-    "mesa": [right, pc_button, temperatura_cinza, ir_pra_caixa],
+    "mesa": [pc_button, temperatura_cinza, ir_pra_caixa, porta_ld],
     "temp": [leftgrau, rightgrau],
     "pc_tela_inicial": [x_button, left],
     "pc_aviso": [aviso, cancelar, esquecer],
     "red_caixa": [red_machine, left],
     "green_caixa": [green_machine, left],
     "invent_arq": [],
-    "cred1": [volcred1, avacred1],
-    "cred2": [volcred2, avacred2],
-    "cred3": [volcred3, avacred3],
-    "cred4": [volcred4, avacred4],
-    "cred5": [volcred5, avacred5],
-    "cred6": [volcred6, avacred6],
-    "cred7": [volcred7, avacred7],
-    "cred8": [volcred8],
-    "divagar_final": [star]
+    "porta": [left],
+    "arm_open": [chipzin, left]
 }
 
 running = True
@@ -1366,6 +1437,7 @@ while running:
                 # Verifique os cliques na tela atual
                 for botao in botoes.get(tela_atual, []):
                     botao.check_click()
+
                 if tela_atual == "invent_arq":
                     for i, img_rect in enumerate(image_rects):
                             if img_rect.collidepoint(event.pos):
@@ -1380,33 +1452,50 @@ while running:
                                     changing_image = current_images[i]
                                 elif current_images[i] in [image4, image2, image5]:
                                     changing_image = current_images[i]
+                elif tela_atual == "porta":
+                    if image_rect_chip.collidepoint(event.pos):
+                        dragging_chip = True
+                        offset_x = event.pos[0] - image_rect_chip.x
+                        offset_y = event.pos[1] - image_rect_chip.y
         elif event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
+                if tela_atual == "invent_arq":
+                    for i, img_rect in enumerate(image_rects):
+                        if dragging[i]:
+                            dragging[i] = False
+                            if changing_image == current_images[i]:
+                                # Lógica para mudar a imagem específica
+                                if changing_image == image1:
+                                    current_images[i] = image4
+                                    changing_image = image4
+                                elif changing_image == image2:
+                                    current_images[i] = image2
+                                elif changing_image == image3:
+                                    current_images[i] = image5
+                                    changing_image = image5
+                                elif current_images[i] == image4:
+                                    current_images[i] = image1
+                                    changing_image = image1
+                                elif current_images[i] == image5:
+                                    current_images[i] = image3
+                                    changing_image = image3
+                elif tela_atual == "porta":
+                    dragging_chip = False
+                    if drop_area.collidepoint(event.pos):
+                        portaaberta = True
+        elif event.type == pygame.MOUSEMOTION:
+            if tela_atual == "invent_arq":
                 for i, img_rect in enumerate(image_rects):
                     if dragging[i]:
-                        dragging[i] = False
-                        if changing_image == current_images[i]:
-                            # Lógica para mudar a imagem específica
-                            if changing_image == image1:
-                                current_images[i] = image4
-                                changing_image = image4
-                            elif changing_image == image2:
-                                current_images[i] = image2
-                            elif changing_image == image3:
-                                current_images[i] = image5
-                                changing_image = image5
-                            elif current_images[i] == image4:
-                                current_images[i] = image1
-                                changing_image = image1
-                            elif current_images[i] == image5:
-                                current_images[i] = image3
-                                changing_image = image3
-        elif event.type == pygame.MOUSEMOTION:
-            for i, img_rect in enumerate(image_rects):
-                if dragging[i]:
+                        mouse_x, mouse_y = event.pos
+                        img_rect.x = mouse_x + offsets[i][0]
+                        img_rect.y = mouse_y + offsets[i][1]
+            elif tela_atual == "porta":
+                if dragging_chip:
                     mouse_x, mouse_y = event.pos
-                    img_rect.x = mouse_x + offsets[i][0]
-                    img_rect.y = mouse_y + offsets[i][1]
+                    image_rect_chip.x = mouse_x - offset_x
+                    image_rect_chip.y = mouse_y - offset_y
+
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE and tela_atual != "main_menu" and tela_atual != "menu_middle" and tela_atual != "créditos":
                 tela_atual = "menu_middle"
@@ -1420,50 +1509,19 @@ while running:
             if event.key == pygame.K_RETURN and "Cadeia_de_Carbono" in text:
                 text = [""]
                 tela_atual = "pc_tela_inicial"
+
     # menus
     if tela_atual == "main_menu":
         window.fill((255, 255, 255))
         fundo(home)
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
-    elif tela_atual == "divagar_final":
-        fundo(divagar)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
     elif tela_atual == "menu_middle":
         fundo(fundo_middlemenu)
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
-    elif tela_atual == "cred1":
-        fundo(cre1)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred2":
-        fundo(cre2)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred3":
-        fundo(cre3)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred4":
-        fundo(cre4)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred5":
-        fundo(cre5)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred6":
-        fundo(cre6)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred7":
-        fundo(cre7)
-        for botao in botoes.get(tela_atual, []):
-            botao.draw(window)
-    elif tela_atual == "cred8":
-        fundo(cre8)
+    elif tela_atual == "créditos":
+        fundo(credits_background)
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
     elif tela_atual == "inventário":
@@ -1477,6 +1535,9 @@ while running:
                 window.blit(bixinekleitin, (530, 200))
             elif set(fichetas) == fichetas_check3:
                 window.blit(kleitinededin, (530, 200))
+        elif area_invent == 2:
+            if cartão_catch == True:
+                window.blit(chipampli, (500, 250))
         for botao in botoes.get(tela_atual, []):
             botao.draw(window)
     elif tela_atual == "invent_arq":
@@ -1543,6 +1604,26 @@ while running:
             botao.draw(window)
         if water == True:
             window.blit(tvligada, (325, 95))
+
+    elif tela_atual == "saladatv_portaberta":
+        fundo(fundosaladatvnowater)
+        if water == True:
+            fundo(fundosaladatv)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
+        if water == True:
+            window.blit(tvligada, (325, 95))
+
+    elif tela_atual == "porta":
+        if portaaberta == False:
+            fundo(porta_vermelho)
+        elif portaaberta == True:
+            fundo(porta_verde)
+        if cartão == True:
+            pygame.draw.rect(window, (125, 125, 125), drop_area, 2)
+            window.blit(chipampli, image_rect_chip)
+        for botao in botoes.get(tela_atual, []):
+            botao.draw(window)
 
     elif tela_atual == "mesa":
         fundo(fundo_geral)
